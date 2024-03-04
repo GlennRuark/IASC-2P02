@@ -79,7 +79,7 @@ scene.add(caveFloor)
 const torusKnotGeometry = new THREE.TorusKnotGeometry(1, 0.2)
 const torusKnotMaterial = new THREE.MeshNormalMaterial()
 const torusKnot = new THREE.Mesh(torusKnotGeometry, torusKnotMaterial)
-torusKnot.position.set(6, 1.5, 0)
+torusKnot.position.set(8, 1.5, 0)
 torusKnot.castShadow = true
 scene.add(torusKnot)
 
@@ -152,23 +152,54 @@ lightPositionFolder
 /*********************
 ** DOM INTERACTIONS **
 **********************/
+// domObject
+const domObject = {
+    part: 1,
+    firstChange: false,
+    secondChange: false,
+    thirdChange: false,
+    fourthChange: false
+}
 
 // continue-reading
 document.querySelector('#continue-reading').onclick = function(){
-    document.querySelector('#part-two'),classList.remove('hidden')
+    document.querySelector('#part-two').classList.remove('hidden')
     document.querySelector('#part-one').classList.add('hidden')
+    domObject.part = 2
 }
 
 // restart
+document.querySelector('#restart').onclick = function() {
+    document.querySelector('#part-two').classList.add('hidden')
+    document.querySelector('#part-one').classList.remove('hidden')
+    domObject.part = 1
+
+    // reset domObject changes
+    domObject.firstChange = false
+    domObject.secondChange = false
+    domObject.thirdChange = false
+    domObject.fourthChange = false
+}
 
 // first change
+document.querySelector('#first-change').onclick = function() {
+    domObject.firstChange = true
+}
 
 // second change
+document.querySelector('#second-change').onclick = function() {
+    domObject.secondChange = true
+}
 
 // third change
+document.querySelector('#third-change').onclick = function() {
+    domObject.thirdChange = true
+}
 
 // fourth change
-
+document.querySelector('#fourth-change').onclick = function() {
+    domObject.fourthChange = true
+}
 
 /*******************
 ** ANIMATION LOOP ** 
@@ -182,14 +213,52 @@ const animation = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Animate Objects
-    torusKnot.rotation.y = elapsedTime
-    torusKnot.position.z = Math.sin(elapsedTime * 0.5) * 2
+    //torusKnot.rotation.y = elapsedTime
+    //torusKnot.position.z = Math.sin(elapsedTime * 0.5) * 2
 
     // Update directionalLightHelper
     //directionalLightHelper.update()
 
     // Controls
     controls.update()
+
+    // DOM INTERACTIONS
+    // part 1
+    if(domObject.part === 1){
+        camera.position.set(1.1, 0.3, 1.3)
+        camera.lookAt(-5, 0, 2)
+    }
+    // part 2
+    if(domObject.part === 2){
+        camera.position.set(9.9, 3.5, 10.5)
+        camera.lookAt(-5, 0, 1.5)
+    }
+    // first-change
+    if(domObject.firstChange){
+        torusKnot.rotation.y = elapsedTime * 5
+        torusKnot.rotation.x = elapsedTime * 2
+    }
+
+    // second-change
+    if(domObject.secondChange){
+        torusKnot.position.z = Math.sin(elapsedTime * 2)
+    }
+
+    // third-change
+    if(domObject.thirdChange){
+        torusKnot.position.z = 0
+        torusKnot.position.y = 1.5
+        torusKnot.rotation.y = elapsedTime * 1
+        torusKnot.rotation.x = elapsedTime * 1
+    }
+
+    // fourth-change
+    if(domObject.fourthChange){
+        torusKnot.scale.x = Math.sin(elapsedTime)
+        torusKnot.scale.y = Math.sin(elapsedTime)
+        torusKnot.rotation.y = elapsedTime * 8
+        torusKnot.rotation.x = elapsedTime * 8
+    }
 
     // Renderer
     renderer.render(scene, camera)
